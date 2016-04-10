@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+<head>
+<title>我的小作品，别踩黑块，谢谢试玩</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<script type="text/javascript">
+/*为了便于观看，表现和行为将都在这个页面书写，且css不换行，请多多谅解*/
+window.onload = function(){
+	/*
+			初始化
+	*/
+	var max_box = document.getElementById('max_box');
+	var sec_box = document.getElementById('sec_box');
+	var btn = document.getElementsByTagName('input')[0];
+	var timer = null;
+	var v = 10;
+	creatrow();
+	creatrow();
+	creatrow();
+
+
+	/*
+		开始游戏
+	*/
+	btn.onclick = function(){
+		timer = setInterval(drop,100);
+		this.remove();
+	}
+
+	/*
+		下落函数
+	*/
+	function drop(){
+	fail();
+	addspeed();
+	sec_box.style.top = sec_box.offsetTop + v +'px';
+	if(sec_box.offsetTop>0){
+		sec_box.offsetTop = 0 + 'px';
+		creatrow()
+		sec_box.style.top = -100+'px';	
+}	
+	else if(sec_box.offsetTop == 0){
+		if(sec_box.childNodes.length==5){
+		sec_box.removeChild(sec_box.lastChild)
+		}
+		creatrow()
+		sec_box.style.top = -100+'px';
+	}
+	
+	}
+	
+	/*
+		创建行，并且每行产生一个黑块
+	*/
+	function creatrow(){	
+		var row = document.createElement('div');
+		var num = parseInt(Math.random()*4);
+		var score = document.getElementsByTagName('h2')[0];
+		row.className = 'active_rows';
+		for(var i = 0;i<4;i++){
+		var lines = document.createElement('div');
+		lines.className = 'active_lines';
+		row.appendChild(lines)
+			}
+		row.childNodes[num].className = 'active_black active_lines';
+		if(sec_box.childNodes.length>=3){
+		sec_box.insertBefore(row,sec_box.firstChild)
+		}else{
+		sec_box.appendChild(row)
+			}
+
+
+		/*
+			点击黑的块变成白色并且加一分，点击白色结束游戏
+		*/
+		sec_box.onclick = function(ev){
+			var ev = ev || event;
+			var tar = ev.target;
+			var score = document.getElementsByTagName('h2')[0];
+		/*
+			点击加分判断失败
+		*/
+		if(tar.className.indexOf('active_black') == 0 ){	//点击黑块
+			tar.className = 'active_withe active_lines';
+			score.innerHTML = parseInt(score.innerHTML) + 1;
+		}
+
+
+		if(tar.className.indexOf('active_black') == -1 ){	//点击不是黑块
+			if(tar.className.indexOf('active_withe') == 0){
+			}else{
+				for(;;){alert("GAME OVER  请刷新重新开始")}
+				clearInterval(timer)
+				
+			}
+		}
+	}		
+ }
+		/*
+			触到底线失败函数
+		*/
+		function fail(){
+			for(var i = 0;i<sec_box.lastChild.childNodes.length;i++){
+				if(sec_box.lastChild.offsetTop>=400){	
+				if(sec_box.lastChild.childNodes[i].className.indexOf('active_black') == 0){
+					for(;;){alert('GAME OVER  请刷新重新开始')};
+					clearInterval(timer)
+				}
+				}
+			}
+		}
+
+		/*
+			加速函数
+		*/
+		function addspeed(){
+			var score = parseInt(document.getElementsByTagName('h2')[0].innerHTML);
+			if( score >= 5 &&  score <15){
+				v = 20;
+			}else if( score>= 15 && score< 25){
+				v = 25
+			}else if( score>= 25){
+				v = 30
+			}else if(score>35){
+				v = 50
+			}else if(score>50){
+				v = 70
+			}
+		}
+		function getStyle(obj,attr){
+		if(obj.currentStyle){
+			return obj.currentStyle[attr]
+		}
+		else{
+
+			return getComputedStyle(obj,false)[attr]
+		}
+	}
+}
+</script>
+<style type="text/css">
+/*为了便于观看，表现和行为将都在这个页面书写，且css不换行，请多多谅解*/
+*{margin: 0 ;list-style: none;font-style:normal;padding: 0;} 
+h1{position: relative;display: block;margin-top: 5px;}
+#max_box{position: relative; width: 400px;height: 400px;background:#FFFFFF;border: 1px solid gray ;margin: 0 auto;overflow: hidden;}
+#sec_box{position: relative;width: 400px;height: 400px;background: #FFFFFF;top:-100px;}
+.active_rows{width: 400px;height:100px;background: #FFFFFF}
+.active_lines{width: 100px;height: 100px;float: left;}
+#score{position: relative;left: 550px;margin-bottom: 20px}
+#score h2{position: absolute;left: 150px;top: -2px}
+.active_black{background:black;}
+.active_withe{background: #FFFFFF}
+#word{position: absolute;left: 30px;top: 300px;}
+input{position: absolute;left: 610px;top:200px;float: left;display: block;width: 150px;height: 150px;font-size: 20px;}
+</style>
+<body>
+	<h1>我的小作品，别踩黑块，谢谢试玩</h1>
+	<div id="score">
+		<h3>你的得分为：</h3>
+		<h2>0</h2>
+		
+	</div>
+	<div id="max_box">
+		<div id="sec_box"></div>
+	</div>
+	<div id="word">
+		游戏规则：<br />
+			点击黑色方块，将黑色方块变成白色，你将得到分数<br />
+			一旦黑色方块掉落，或者点击黑色方块以外的区域将结束游戏
+	</div>
+	<input type = "button" value = "开始游戏">
+</body>
+</html>    
